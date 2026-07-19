@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAN Mesh Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="window">
+        <header class="header">
+            <h3>LAN Chat Pipeline</h3>
+            <span class="status-indicator">Online</span>
+        </header>
+        <div id="display-feed" class="feed"></div>
+        <form id="input-bridge" class="input-area">
+            <input id="text-field" autocomplete="off" placeholder="Write a broadcast message..." required />
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const handle = prompt("Choose your network alias:") || `User_${Math.floor(Math.random() * 1000)}`;
+
+        const bridge = document.getElementById('input-bridge');
+        const field = document.getElementById('text-field');
+        const feed = document.getElementById('display-feed');
+
+        bridge.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (field.value.trim()) {
+                socket.emit('message_packet', { user: handle, text: field.value });
+                field.value = '';
+            }
+        });
+
+        socket.on('message_packet', (data) => {
+            const row = document.createElement('div');
+            row.className = `message-row ${data.user === handle ? 'self' : 'peer'}`;
+            row.innerHTML = `
+                <div class="bubble">
+                    <span class="meta">${data.user} • ${data.time}</span>
+                    <p class="body">${data.text}</p>
+                </div>
+            `;
+            feed.appendChild(row);
+            feed.scrollTop = feed.scrollHeight;
+        });
+    </script>
+</body>
+</html>
