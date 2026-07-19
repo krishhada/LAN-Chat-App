@@ -1,0 +1,13 @@
+{
+  "name": "lan-chat-app",
+  "version": "1.0.0",
+  "description": "A lightweight real-time chat application working over a Local Area Network.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}
